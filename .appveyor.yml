@@ -6,6 +6,8 @@ environment:
     PSEdition: Desktop
   - APPVEYOR_BUILD_WORKER_IMAGE: WMF 4
     PSEdition: Desktop
+  - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    PSEdition: Core
 
 skip_branch_with_pr: true
 build: off
