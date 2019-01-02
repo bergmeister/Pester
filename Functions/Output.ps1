@@ -174,7 +174,7 @@ function ConvertTo-PesterResult {
         stackTrace = ""
         ErrorRecord = $null
         success = $false
-        result = "Failed"
+        Result = "Failed"
     }
 
     if(-not $ErrorRecord)
