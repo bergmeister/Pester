@@ -6,6 +6,8 @@ environment:
     PSEdition: Desktop
   - APPVEYOR_BUILD_WORKER_IMAGE: WMF 4
     PSEdition: Desktop
+  - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    PSEdition: Core
 
 skip_branch_with_pr: true
 build: off
@@ -13,13 +15,22 @@ build: off
 test_script:
 - ps: |
     if ( $env:PSEdition -eq 'Desktop' ) {
-    Set-StrictMode -Version Latest
-    Import-Module ./Pester.psd1
-    Invoke-Pester -ExcludeTag VersionChecks, StyleRules, Help -EnableExit -OutputFile TestResults.xml -OutputFormat NUnitXml
-    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml')) }
+      Set-StrictMode -Version Latest
+      Import-Module ./Pester.psd1
+      Invoke-Pester -ExcludeTag VersionChecks, StyleRules, Help -EnableExit -OutputFile TestResults.xml -OutputFormat NUnitXml
+      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
+    }
 - pwsh: |
     if ( $env:PSEdition -eq 'Core' ) {
-    Set-StrictMode -Version Latest
-    Import-Module ./Pester.psd1
-    Invoke-Pester -ExcludeTag VersionChecks, StyleRules, Help -EnableExit -OutputFile TestResults.xml -OutputFormat NUnitXml
-    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml')) }
+      Set-StrictMode -Version Latest
+      Import-Module ./Pester.psd1
+      try {
+        $testResults = Invoke-Pester -ExcludeTag VersionChecks, StyleRules, Help -EnableExit -OutputFile TestResults.xml -OutputFormat NUnitXml
+      finally {
+        (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/${env:APPVEYOR_JOB_ID}", (Join-Path $PWD 'TestResults.xml'))
+      }
+    # if ($IsLinux) {
+    # AppVeyor Linux does not 
+    # if ($testResults.FailedCount -gt 0) { throw "$($testResults.FailedCount) tests failed." }
+    # }
+    }
