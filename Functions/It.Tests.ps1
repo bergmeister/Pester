@@ -57,7 +57,7 @@ InModuleScope Pester {
             $scriptBlock | Should -Not -Throw
             $testState.TestResult[-1].Passed | Should -Be $false
             $testState.TestResult[-1].ParameterizedSuiteName | Should -BeNullOrEmpty
-            $testState.TestResult[-1].FailureMessage | Should -Be 'I am a failed test'
+            $testState.TestResult[-1].FailureMessage | Should -Be 'I am a failed testt'
         }
 
         $script:counterNameThatIsReallyUnlikelyToConflictWithAnything = 0
